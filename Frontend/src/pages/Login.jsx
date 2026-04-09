@@ -11,7 +11,7 @@ export default function Login() {
 
   const submit = async () => {
     try {
-      // ✅ Validation
+      //  Validation
       if (!form.email || !form.password || (!isLogin && !form.name)) {
         return alert("Please fill all fields");
       }
