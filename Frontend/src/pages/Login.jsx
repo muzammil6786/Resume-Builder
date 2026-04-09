@@ -1,5 +1,6 @@
 import { useState } from "react";
 import api from "../services/api";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [isLogin, setIsLogin] = useState(true);
@@ -9,26 +10,27 @@ export default function Login() {
     password: "",
   });
 
-  const submit = async () => {
-    try {
-      //  Validation
-      if (!form.email || !form.password || (!isLogin && !form.name)) {
-        return alert("Please fill all fields");
-      }
 
-      if (!form.email.endsWith("@gmail.com")) {
-        return alert("Only Gmail addresses are allowed");
-      }
+const navigate = useNavigate();
 
-      const url = isLogin ? "/api/auth/login" : "/api/auth/register";
-      const res = await api.post(url, form);
-
-      localStorage.setItem("token", res.data.user.accessToken);
-      window.location.href = "/dashboard";
-    } catch (err) {
-      alert(err.response?.data?.message || "Something went wrong");
+const submit = async () => {
+  try {
+    if (!form.email || !form.password || (!isLogin && !form.name)) {
+      return alert("Please fill all fields");
     }
-  };
+
+    if (!form.email.endsWith("@gmail.com")) {
+      return alert("Only Gmail addresses are allowed");
+    }
+
+    const url = isLogin ? "/api/auth/login" : "/api/auth/register";
+    const res = await api.post(url, form);
+    localStorage.setItem("token", res.data.user.accessToken);
+    navigate("/dashboard"); 
+  } catch (err) {
+    alert(err.response?.data?.message || "Something went wrong");
+  }
+};
 
   return (
     <div className="h-screen flex flex-col items-center justify-center px-4 bg-gray-50">
