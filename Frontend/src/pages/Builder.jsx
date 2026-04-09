@@ -119,10 +119,10 @@ export default function Builder() {
         const res = await api.post("/resume", cleanResume);
         setSearchParams({ id: res.data._id }, { replace: true });
       }
-      alert("✅ Saved");
+      alert(" Saved");
     } catch (err) {
       console.error(err.response?.data || err.message);
-      alert("❌ Save failed");
+      alert(" Save failed");
     } finally {
       setSaving(false);
     }
@@ -223,7 +223,7 @@ export default function Builder() {
       a.click();
     } catch (err) {
       console.error("Export failed:", err);
-      alert("❌ PDF export failed");
+      alert(" PDF export failed");
     } finally {
       setExporting(false);
     }
