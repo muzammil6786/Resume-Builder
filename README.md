@@ -6,6 +6,18 @@ Build a dynamic resume builder where users can register, log in, create resumes,
 
 ---
 
+## 🌐 Deployed Links
+
+* **Frontend (Vercel):**
+  https://resume-builder-pi-pearl.vercel.app
+
+* **Backend (Render):**
+  https://resume-builder-p13s.onrender.com
+
+
+
+* use email :- khan@gmail.com  and password :- 123456 to see previously added data.
+
 ## 📌 Features
 
 ###  1. Authentication System
