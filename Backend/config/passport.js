@@ -1,5 +1,5 @@
 const passport = require("passport");
-const BasicStrategy = require("passport-http").BasicStrategy;
+// const BasicStrategy = require("passport-http").BasicStrategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -16,19 +16,20 @@ const generateAccessToken = (user) => {
   );
 };
 
-passport.use(new BasicStrategy(async (username, password, done) => {
-  try {
-    const user = await User.findOne({ username });
-    if (!user) return done(null, false);
+// passport.use(new BasicStrategy(async (username, password, done) => {
+//   try {
+//     const user = await User.findOne({ username });
+//     if (!user) return done(null, false);
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return done(null, false);
+//     const isMatch = await bcrypt.compare(password, user.password);
+//     if (!isMatch) return done(null, false);
 
-    return done(null, user);
-  } catch (err) {
-    return done(err);
-  }
-}));
+//     return done(null, user);
+//   } catch (err) {
+//     return done(err);
+//   }
+// }));
+
 
 passport.use(
   new GoogleStrategy(
@@ -44,14 +45,14 @@ passport.use(
         //  create user if not exists
         if (!user) {
           user = await User.create({
-            name: profile.displayName, // ✅ FIXED
+            name: profile.displayName, // FIXED
             email: profile.emails?.[0]?.value,
             googleId: profile.id,
             provider: "google",
           });
         }
 
-        // ✅ Generate JWT AFTER user exists
+        // Generate JWT AFTER user exists
         const token = generateAccessToken(user);
 
         // attach token to user (temporary)
