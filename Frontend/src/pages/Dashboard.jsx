@@ -33,7 +33,9 @@ export default function Dashboard() {
       localStorage.removeItem("token");
 
       // redirect to login
+      
       navigate("/");
+      alert("Logged out successfully");
     } catch (err) {
       console.error("Logout error:", err);
       alert("Logout failed");
