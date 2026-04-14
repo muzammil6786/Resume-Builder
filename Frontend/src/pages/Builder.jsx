@@ -109,6 +109,7 @@ export default function Builder() {
       const { _id, createdAt, updatedAt, __v, user, ...cleanResume } = resume;
 
       // fontSize must be stored as a number in the DB
+      // Always guarantees a valid number
       if (cleanResume.settings?.fontSize) {
         cleanResume.settings.fontSize = parseInt(cleanResume.settings.fontSize);
       }

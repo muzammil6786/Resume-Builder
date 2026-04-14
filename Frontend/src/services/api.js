@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://resume-builder-p13s.onrender.com",
+  baseURL: "https://resume-builder-p13s.onrender.com" , 
 });
 
 api.interceptors.request.use((config) => {

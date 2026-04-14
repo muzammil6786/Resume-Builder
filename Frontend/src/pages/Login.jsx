@@ -3,6 +3,7 @@ import api from "../services/api";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
+  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [form, setForm] = useState({
     name: "",
@@ -10,27 +11,37 @@ export default function Login() {
     password: "",
   });
 
-
-const navigate = useNavigate();
-
-const submit = async () => {
-  try {
-    if (!form.email || !form.password || (!isLogin && !form.name)) {
-      return alert("Please fill all fields");
-    }
-
-    if (!form.email.endsWith("@gmail.com")) {
-      return alert("Only Gmail addresses are allowed");
-    }
-
-    const url = isLogin ? "/api/auth/login" : "/api/auth/register";
-    const res = await api.post(url, form);
-    localStorage.setItem("token", res.data.user.accessToken);
-    navigate("/dashboard"); 
-  } catch (err) {
-    alert(err.response?.data?.message || "Something went wrong");
-  }
+  /* ================= GOOGLE LOGIN ================= */
+  // const googleLogin = () => {
+  //   window.location.href = "http://localhost:5000/api/auth/google";
+  // };
+  const googleLogin = () => {
+  window.location.href =
+    "https://resume-builder-p13s.onrender.com/api/auth/google";
 };
+
+  /* ================= NORMAL LOGIN / REGISTER ================= */
+  const submit = async () => {
+    try {
+      if (!form.email || !form.password || (!isLogin && !form.name)) {
+        return alert("Please fill all fields");
+      }
+
+      if (!form.email.endsWith("@gmail.com")) {
+        return alert("Only Gmail addresses are allowed");
+      }
+
+      const url = isLogin ? "/api/auth/login" : "/api/auth/register";
+
+      const res = await api.post(url, form);
+
+      localStorage.setItem("token", res.data.user.accessToken);
+
+      navigate("/dashboard");
+    } catch (err) {
+      alert(err.response?.data?.message || "Something went wrong");
+    }
+  };
 
   return (
     <div className="h-screen flex flex-col items-center justify-center px-4 bg-gray-50">
@@ -50,7 +61,7 @@ const submit = async () => {
                       bg-white/70 backdrop-blur-lg 
                       border-2 border-gray-200 
                       shadow-xl">
-        
+
         {/* Title */}
         <h2 className="text-2xl font-bold text-center text-gray-700 mb-6">
           {isLogin ? "Login to your account" : "Create your account"}
@@ -83,7 +94,7 @@ const submit = async () => {
           </button>
         </div>
 
-        {/* ✅ FORM (Enter key works now) */}
+        {/* FORM */}
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -91,7 +102,6 @@ const submit = async () => {
           }}
           className="flex flex-col gap-5"
         >
-          
           {!isLogin && (
             <input
               type="text"
@@ -121,7 +131,7 @@ const submit = async () => {
             }
           />
 
-          {/* Button */}
+          {/* Submit Button */}
           <button
             type="submit"
             className={`mt-2 py-3 rounded-xl font-semibold text-white transition duration-300 ${
@@ -133,6 +143,16 @@ const submit = async () => {
             {isLogin ? "Login" : "Sign Up"}
           </button>
         </form>
+
+        {/* GOOGLE BUTTON */}
+        <div className="text-center mt-6">
+          <button
+            onClick={googleLogin}
+            className="w-full py-3 rounded-xl border border-gray-300 bg-white hover:bg-gray-100 transition font-medium"
+          >
+            Continue with Google
+          </button>
+        </div>
 
         {/* Footer */}
         <p className="text-center text-sm text-gray-500 mt-8">
