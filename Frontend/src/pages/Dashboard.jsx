@@ -7,14 +7,12 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  /* ================= FETCH ================= */
   useEffect(() => {
     const fetchResumes = async () => {
       try {
         const res = await api.get("/resume");
         setResumes(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
-        console.error("Fetch error:", err);
         alert("Unauthorized - login again");
       } finally {
         setLoading(false);
@@ -24,185 +22,161 @@ export default function Dashboard() {
     fetchResumes();
   }, []);
 
-  /* ================= LOGOUT ================= */
   const handleLogout = async () => {
     try {
-      await api.get("/api/auth/logout"); // adjust endpoint if needed
-
-      // remove token if stored
+      await api.get("/api/auth/logout");
       localStorage.removeItem("token");
-
-      // redirect to login
-
       navigate("/");
-      alert("Logged out successfully");
-    } catch (err) {
-      console.error("Logout error:", err);
+    } catch {
       alert("Logout failed");
     }
   };
 
-  /* ================= DELETE ================= */
   const handleDelete = async (id) => {
     try {
       if (!window.confirm("Delete this resume?")) return;
-
       await api.delete(`/resume/${id}`);
       setResumes((prev) => prev.filter((r) => r._id !== id));
-    } catch (err) {
-      console.error("Delete error:", err);
+    } catch {
       alert("Delete failed");
     }
   };
 
-  /* ================= EDIT NAVIGATION ================= */
   const handleEdit = (id) => {
-    if (!id) {
-      console.error("Invalid ID");
-      return;
-    }
-
-    navigate(`/builder?id=${id}`, { replace: false });
+    navigate(`/builder?id=${id}`);
   };
 
   return (
-  <div className="p-4 sm:p-6 lg:p-8 bg-gray-100 min-h-screen">
+    <div className="min-h-screen bg-gray-50">
+      {/* HEADER */}
+      <header className="bg-white border-b">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-5">
+          {/* MOBILE */}
+          <div className="flex flex-col gap-4 md:hidden">
+            <h1 className="text-xl font-bold">Resumes</h1>
 
-    {/* ── HEADER ── */}
-    <div className="flex flex-col xs:flex-row justify-between items-start xs:items-center gap-3 mb-6">
-      <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 leading-tight">
-        Resumes
-      </h1>
-
-      <div className="flex items-center gap-2 w-full xs:w-auto">
-        <button
-          onClick={() => navigate("/builder")}
-          className="flex-1 xs:flex-none bg-blue-600 hover:bg-blue-700 active:bg-blue-800
-                     text-white px-4 py-2.5 rounded-lg text-sm font-semibold
-                     transition-colors min-h-[42px] whitespace-nowrap"
-        >
-          + Create Resume
-        </button>
-
-        <button
-          onClick={handleLogout}
-          className="flex-2 max-w-xs xs:flex-none bg-red-500 hover:bg-red-600 active:bg-red-700
-                     text-white px-4 py-2.5 rounded-lg text-sm font-semibold
-                     transition-colors min-h-[42px] whitespace-nowrap"
-        >
-          Logout
-        </button>
-      </div>
-    </div>
-
-    {/* ── LOADING ── */}
-    {loading ? (
-      <div className="flex justify-center items-center h-40">
-        <p className="text-gray-500 animate-pulse text-sm">Loading resumes…</p>
-      </div>
-
-    ) : resumes.length === 0 ? (
-
-      /* ── EMPTY STATE ── */
-      <div className="flex flex-col items-center justify-center text-center
-                      mt-10 sm:mt-16 px-4 py-12 bg-white rounded-2xl
-                      border border-dashed border-gray-300 max-w-md mx-auto">
-        <div className="text-4xl mb-4 select-none">📄</div>
-        <p className="text-gray-700 font-semibold text-lg">No resumes yet</p>
-        <p className="text-gray-400 text-sm mt-1 mb-6 max-w-xs">
-          Create your first resume and it'll show up here.
-        </p>
-        <button
-          onClick={() => navigate("/builder")}
-          className="bg-blue-600 hover:bg-blue-700 active:bg-blue-800
-                     text-white px-6 py-2.5 rounded-lg font-semibold text-sm
-                     transition-colors min-h-[42px]"
-        >
-          + Create Your First Resume
-        </button>
-      </div>
-
-    ) : (
-
-      /* ── GRID ── */
-      <div className="grid gap-4 sm:gap-5
-                      grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
-
-        {resumes.map((r) => (
-          <div
-            key={r._id}
-            className="bg-white rounded-xl border border-gray-200
-                       hover:border-blue-300 hover:shadow-lg
-                       transition-all duration-200
-                       flex flex-col"
-          >
-            {/* ── CARD BODY ── */}
-            <div className="flex-1 p-4 sm:p-5">
-
-              {/* Title + name */}
-              <h2 className="text-base sm:text-lg font-semibold text-gray-800 truncate leading-snug">
-                {r.title || "Untitled Resume"}
-              </h2>
-              <p className="text-sm text-gray-500 mt-0.5 truncate">
-                {r.personalInfo?.name || "No name provided"}
-              </p>
-
-              {/* Skills chips */}
-              {(r.technicalSkills || []).length > 0 ? (
-                <div className="flex flex-wrap gap-1.5 mt-3">
-                  {(r.technicalSkills || []).slice(0, 4).map((skill, idx) => (
-                    <span
-                      key={idx}
-                      className="bg-blue-50 text-blue-700 border border-blue-100
-                                 text-xs font-medium px-2 py-0.5 rounded-full
-                                 max-w-[120px] truncate"
-                    >
-                      {skill}
-                    </span>
-                  ))}
-                  {(r.technicalSkills || []).length > 4 && (
-                    <span className="text-xs text-gray-400 self-center">
-                      +{r.technicalSkills.length - 4} more
-                    </span>
-                  )}
-                </div>
-              ) : (
-                <p className="text-xs text-gray-400 mt-3 italic">No skills added</p>
-              )}
-            </div>
-
-            {/* ── CARD FOOTER ── */}
-            <div className="border-t border-gray-100 flex">
+            <div className="flex gap-3">
               <button
-                onClick={() => handleEdit(r._id)}
-                className="flex-1 flex items-center justify-center gap-1.5
-                           py-3 text-sm font-semibold text-blue-600
-                           hover:bg-blue-50 active:bg-blue-100
-                           transition-colors rounded-bl-xl min-h-[48px]"
+                onClick={() => navigate("/builder")}
+                className="flex-1 bg-blue-600 text-white py-3 rounded-lg text-base font-semibold"
               >
-                <span className="text-base leading-none">✏️</span>
-                Edit
+                New
               </button>
 
-              <div className="w-px bg-gray-100" />
-
               <button
-                onClick={() => handleDelete(r._id)}
-                className="flex-1 flex items-center justify-center gap-1.5
-                           py-3 text-sm font-semibold text-red-500
-                           hover:bg-red-50 active:bg-red-100
-                           transition-colors rounded-br-xl min-h-[48px]"
+                onClick={handleLogout}
+                className="flex-1 border text-red-500 py-3 rounded-lg text-base font-semibold"
               >
-                <span className="text-base leading-none">🗑️</span>
-                Delete
+                Logout
               </button>
             </div>
-
           </div>
-        ))}
 
-      </div>
-    )}
-  </div>
-);
+          {/* DESKTOP */}
+          <div className="hidden md:flex justify-between items-center">
+            <h1 className="text-2xl lg:text-3xl font-bold">Resumes</h1>
+
+            <div className="flex gap-4">
+              <button
+                onClick={() => navigate("/builder")}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-lg text-base font-semibold"
+              >
+                + Create Resume
+              </button>
+
+              <button
+                onClick={handleLogout}
+                className="border border-red-200 text-red-500 px-5 py-3 rounded-lg text-base font-semibold"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* MAIN */}
+      <main className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-10">
+        {loading ? (
+          <div className="text-center text-lg py-12">Loading...</div>
+        ) : resumes.length === 0 ? (
+          <div className="text-center py-20 bg-white rounded-xl border max-w-md mx-auto">
+            <p className="font-semibold text-xl md:text-2xl">No resumes yet</p>
+
+            <button
+              onClick={() => navigate("/builder")}
+              className="mt-6 bg-blue-600 text-white px-8 py-3 rounded-lg text-base font-semibold"
+            >
+              Create Resume
+            </button>
+          </div>
+        ) : (
+          <div
+            className="
+              grid
+              gap-5 md:gap-7 lg:gap-10
+              grid-cols-1
+              md:grid-cols-2
+              lg:grid-cols-3
+              xl:grid-cols-4
+            "
+          >
+            {resumes.map((r) => (
+              <div
+                key={r._id}
+                className="
+    bg-white border rounded-2xl 
+    p-6 md:p-7 lg:p-8
+    flex flex-col justify-between
+    min-h-[220px] md:min-h-[240px]
+    shadow-sm hover:shadow-md
+    transition-all duration-200
+  "
+              >
+                {/* TOP CONTENT */}
+                <div>
+                  {/* TITLE */}
+                  <h2 className="font-semibold text-lg md:text-xl lg:text-2xl leading-snug truncate">
+                    {r.title || "Untitled Resume"}
+                  </h2>
+
+                  {/* NAME */}
+                  <p className="text-base md:text-lg text-gray-500 mt-3 truncate">
+                    {r.personalInfo?.name || "No name"}
+                  </p>
+                </div>
+
+                {/* ACTIONS */}
+                <div className="flex flex-col sm:flex-row gap-3 mt-6">
+                  <button
+                    onClick={() => handleEdit(r._id)}
+                    className="flex-1 bg-blue-50 text-blue-600 
+                 py-3 md:py-3.5 
+                 rounded-xl 
+                 text-base md:text-lg 
+                 font-semibold 
+                 hover:bg-blue-100 transition"
+                  >
+                    Edit
+                  </button>
+
+                  <button
+                    onClick={() => handleDelete(r._id)}
+                    className="flex-1 bg-red-50 text-red-500 
+                 py-3 md:py-3.5 
+                 rounded-xl 
+                 text-base md:text-lg 
+                 font-semibold 
+                 hover:bg-red-100 transition"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </main>
+    </div>
+  );
 }

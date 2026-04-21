@@ -4,15 +4,9 @@
 
 body {
   font-family: 'Segoe UI', sans-serif;
-  color: #333;
 }
-h1 {
-  font-size: 28px;
-}
-h2 {
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 5px;
-}
+
+/* Optional reset */
 * {
   box-sizing: border-box;
 }
