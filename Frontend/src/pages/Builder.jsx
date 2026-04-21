@@ -314,7 +314,7 @@ return (
       >
         {/* Header (desktop only – mobile uses the tab bar above) */}
         <div className="hidden lg:flex items-center justify-between px-6 py-4 bg-slate-900 text-white flex-shrink-0">
-          <h2 className="text-base font-bold tracking-wide">✦ Resume Builder</h2>
+          <h2 className="text-base font-bold tracking-wide">✦ Resume Builder By ResuMate</h2>
           <button
             onClick={handleSave}
             disabled={saving}

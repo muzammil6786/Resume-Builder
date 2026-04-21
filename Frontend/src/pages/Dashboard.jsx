@@ -71,7 +71,7 @@ export default function Dashboard() {
     {/* ── HEADER ── */}
     <div className="flex flex-col xs:flex-row justify-between items-start xs:items-center gap-3 mb-6">
       <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 leading-tight">
-        My Resumes
+        Resumes
       </h1>
 
       <div className="flex items-center gap-2 w-full xs:w-auto">
