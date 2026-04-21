@@ -47,6 +47,8 @@ export default function Builder() {
   const [exporting, setExporting]         = useState(false);
   const [loadingResume, setLoadingResume] = useState(false);
   const [fetchError, setFetchError]       = useState(null);
+  const [activeTab, setActiveTab] = useState("editor");
+
 
   /* ── fetch whenever id changes ── */
   useEffect(() => {
@@ -273,24 +275,72 @@ export default function Builder() {
   }
 
   /* ── main UI ── */
-  return (
-    <div className="flex h-screen overflow-hidden bg-gray-100">
+  // ─── Paste this return(...) block to replace your existing one ───────────────
+// Requires no extra deps. Tailwind breakpoints used: sm / md / lg
 
-      {/* ═══════════════ LEFT PANEL – Editor ═══════════════ */}
-      <div className="w-1/2 flex flex-col bg-white border-r border-gray-200 overflow-hidden">
+return (
+  <div className="flex flex-col h-screen overflow-hidden bg-gray-100">
 
-        <div className="flex items-center justify-between px-6 py-4 bg-slate-900 text-white flex-shrink-0">
+    {/* ══════════════ MOBILE TAB BAR (visible below lg) ══════════════ */}
+    <div className="lg:hidden flex items-center bg-slate-900 text-white flex-shrink-0">
+      <button
+        onClick={() => setActiveTab("editor")}
+        className={`flex-1 py-3 text-sm font-bold tracking-wide transition-colors ${
+          activeTab === "editor" ? "bg-slate-700 text-white" : "text-slate-400 hover:text-white"
+        }`}
+      >
+        ✦ Editor
+      </button>
+      <button
+        onClick={() => setActiveTab("preview")}
+        className={`flex-1 py-3 text-sm font-bold tracking-wide transition-colors ${
+          activeTab === "preview" ? "bg-slate-700 text-white" : "text-slate-400 hover:text-white"
+        }`}
+      >
+         Preview
+      </button>
+    </div>
+
+    {/* ══════════════ MAIN BODY ══════════════ */}
+    <div className="flex flex-1 overflow-hidden flex-col lg:flex-row">
+
+      {/* ───────────── LEFT PANEL – Editor ───────────── */}
+      <div
+        className={`
+          flex flex-col bg-white border-r border-gray-200
+          lg:w-1/2 lg:flex
+          ${activeTab === "editor" ? "flex" : "hidden"} w-full
+        `}
+      >
+        {/* Header (desktop only – mobile uses the tab bar above) */}
+        <div className="hidden lg:flex items-center justify-between px-6 py-4 bg-slate-900 text-white flex-shrink-0">
           <h2 className="text-base font-bold tracking-wide">✦ Resume Builder</h2>
           <button
             onClick={handleSave}
             disabled={saving}
-            className={`px-4 py-2 rounded text-white ${saving ? "bg-gray-400" : "bg-green-600"}`}
+            className={`px-4 py-2 rounded text-white text-sm font-semibold ${
+              saving ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"
+            }`}
           >
             {saving ? "Saving..." : "Save"}
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
+        {/* Mobile: inline Save button inside the editor scroll area */}
+        <div className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-gray-200 flex-shrink-0">
+          <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Editing Resume</p>
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className={`px-4 py-1.5 rounded text-white text-xs font-semibold ${
+              saving ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"
+            }`}
+          >
+            {saving ? "Saving..." : "Save"}
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-5 space-y-6">
 
           {/* TITLE */}
           <div>
@@ -306,7 +356,7 @@ export default function Builder() {
           {/* DESIGN */}
           <div>
             <label className="block text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Design</label>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 
               <div>
                 <span className="text-xs text-gray-500 font-semibold">Template</span>
@@ -325,7 +375,9 @@ export default function Builder() {
                 <select
                   className="mt-1 w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:border-blue-400"
                   value={resume.settings.fontSize}
-                  onChange={(e) => setResume((prev) => ({ ...prev, settings: { ...prev.settings, fontSize: e.target.value } }))}
+                  onChange={(e) =>
+                    setResume((prev) => ({ ...prev, settings: { ...prev.settings, fontSize: e.target.value } }))
+                  }
                 >
                   <option value="12px">Small</option>
                   <option value="14px">Medium</option>
@@ -338,7 +390,9 @@ export default function Builder() {
                 <select
                   className="mt-1 w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:border-blue-400"
                   value={resume.settings.spacing}
-                  onChange={(e) => setResume((prev) => ({ ...prev, settings: { ...prev.settings, spacing: e.target.value } }))}
+                  onChange={(e) =>
+                    setResume((prev) => ({ ...prev, settings: { ...prev.settings, spacing: e.target.value } }))
+                  }
                 >
                   <option value="compact">Compact</option>
                   <option value="normal">Normal</option>
@@ -352,7 +406,9 @@ export default function Builder() {
                   <input
                     type="color"
                     value={resume.settings.primaryColor}
-                    onChange={(e) => setResume((prev) => ({ ...prev, settings: { ...prev.settings, primaryColor: e.target.value } }))}
+                    onChange={(e) =>
+                      setResume((prev) => ({ ...prev, settings: { ...prev.settings, primaryColor: e.target.value } }))
+                    }
                     className="w-9 h-9 rounded-lg border border-gray-200 cursor-pointer p-0"
                   />
                   <span className="text-xs text-gray-400">{resume.settings.primaryColor}</span>
@@ -360,7 +416,7 @@ export default function Builder() {
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-y-2 gap-x-3 mt-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-y-2 gap-x-3 mt-3">
               {[
                 ["showEducation",    "Education"],
                 ["showExperience",   "Experience"],
@@ -373,7 +429,9 @@ export default function Builder() {
                   <input
                     type="checkbox"
                     checked={resume.settings[key]}
-                    onChange={(e) => setResume((prev) => ({ ...prev, settings: { ...prev.settings, [key]: e.target.checked } }))}
+                    onChange={(e) =>
+                      setResume((prev) => ({ ...prev, settings: { ...prev.settings, [key]: e.target.checked } }))
+                    }
                     className="accent-blue-500"
                   />
                   {label}
@@ -415,7 +473,12 @@ export default function Builder() {
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="text-xs font-bold uppercase tracking-widest text-gray-400">Education</label>
-              <button onClick={() => addItem("education", { school: "", degree: "", year: "" })} className="text-xs font-semibold text-blue-500 hover:text-blue-700">+ Add</button>
+              <button
+                onClick={() => addItem("education", { school: "", degree: "", year: "" })}
+                className="text-xs font-semibold text-blue-500 hover:text-blue-700"
+              >
+                + Add
+              </button>
             </div>
             {resume.education.map((edu, i) => (
               <div key={i} className="border border-gray-200 rounded-lg p-3 mt-2 bg-gray-50 relative">
@@ -431,7 +494,12 @@ export default function Builder() {
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="text-xs font-bold uppercase tracking-widest text-gray-400">Experience</label>
-              <button onClick={() => addItem("experience", { company: "", role: "", duration: "", description: "" })} className="text-xs font-semibold text-blue-500 hover:text-blue-700">+ Add</button>
+              <button
+                onClick={() => addItem("experience", { company: "", role: "", duration: "", description: "" })}
+                className="text-xs font-semibold text-blue-500 hover:text-blue-700"
+              >
+                + Add
+              </button>
             </div>
             {resume.experience.map((exp, i) => (
               <div key={i} className="border border-gray-200 rounded-lg p-3 mt-2 bg-gray-50 relative">
@@ -448,7 +516,12 @@ export default function Builder() {
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="text-xs font-bold uppercase tracking-widest text-gray-400">Projects</label>
-              <button onClick={() => addItem("projects", { title: "", description: "" })} className="text-xs font-semibold text-blue-500 hover:text-blue-700">+ Add</button>
+              <button
+                onClick={() => addItem("projects", { title: "", description: "" })}
+                className="text-xs font-semibold text-blue-500 hover:text-blue-700"
+              >
+                + Add
+              </button>
             </div>
             {resume.projects.map((p, i) => (
               <div key={i} className="border border-gray-200 rounded-lg p-3 mt-2 bg-gray-50 relative">
@@ -487,42 +560,80 @@ export default function Builder() {
             </div>
           ))}
 
+          {/* Bottom padding so last item clears the mobile export button */}
+          <div className="h-4 lg:hidden" />
         </div>
-      </div>
 
-      {/* ═══════════════ RIGHT PANEL – Preview ═══════════════ */}
-      <div className="w-1/2 flex flex-col overflow-hidden">
-
-        <div className="flex items-center justify-between px-6 py-3 bg-white border-b border-gray-200 flex-shrink-0">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Live Preview</p>
-            <p className="text-sm font-semibold text-gray-800 leading-tight">{resume.title || "Untitled Resume"}</p>
-          </div>
+        {/* Mobile sticky Export button at bottom of editor */}
+        <div className="lg:hidden flex-shrink-0 px-4 py-3 bg-white border-t border-gray-200">
           <button
-            onClick={handleExport}
+            onClick={() => { setActiveTab("preview"); setTimeout(handleExport, 200); }}
             disabled={exporting}
-            className="bg-slate-800 hover:bg-slate-700 text-white px-5 py-2 rounded-lg text-sm font-bold tracking-wide transition-colors disabled:opacity-60"
+            className="w-full bg-slate-800 hover:bg-slate-700 text-white py-2.5 rounded-lg text-sm font-bold tracking-wide transition-colors disabled:opacity-60"
           >
             {exporting ? "Exporting…" : "⬇ Export PDF"}
           </button>
         </div>
+      </div>
 
-        <div className="flex-1 overflow-y-auto bg-[#d4d8df] p-8 flex justify-center items-start">
+      {/* ───────────── RIGHT PANEL – Preview ───────────── */}
+      <div
+        className={`
+          flex flex-col
+          lg:w-1/2 lg:flex
+          ${activeTab === "preview" ? "flex" : "hidden"} w-full overflow-hidden
+        `}
+      >
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3 bg-white border-b border-gray-200 flex-shrink-0">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Live Preview</p>
+            <p className="text-sm font-semibold text-gray-800 leading-tight truncate max-w-[180px] sm:max-w-none">
+              {resume.title || "Untitled Resume"}
+            </p>
+          </div>
+          {/* Export button – hidden on mobile (lives in the editor footer instead) */}
+          <button
+            onClick={handleExport}
+            disabled={exporting}
+            className="hidden lg:block bg-slate-800 hover:bg-slate-700 text-white px-5 py-2 rounded-lg text-sm font-bold tracking-wide transition-colors disabled:opacity-60"
+          >
+            {exporting ? "Exporting…" : "⬇ Export PDF"}
+          </button>
+          {/* Mobile: Export button visible from preview tab */}
+          <button
+            onClick={handleExport}
+            disabled={exporting}
+            className="lg:hidden bg-slate-800 hover:bg-slate-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold tracking-wide transition-colors disabled:opacity-60"
+          >
+            {exporting ? "…" : "⬇ Export"}
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto bg-[#d4d8df] p-4 sm:p-6 lg:p-8 flex justify-center items-start">
           <div
             className="bg-white w-full max-w-2xl rounded-sm overflow-hidden relative"
-            style={{ minHeight: "960px", boxShadow: "0 2px 8px rgba(0,0,0,0.08), 0 12px 40px rgba(0,0,0,0.16)" }}
+            style={{
+              minHeight: "960px",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.08), 0 12px 40px rgba(0,0,0,0.16)",
+            }}
           >
             <div
               className="absolute top-0 right-0 w-0 h-0 z-10"
-              style={{ borderStyle: "solid", borderWidth: "0 26px 26px 0", borderColor: "transparent #d4d8df transparent transparent" }}
+              style={{
+                borderStyle: "solid",
+                borderWidth: "0 26px 26px 0",
+                borderColor: "transparent #d4d8df transparent transparent",
+              }}
             />
             {resume.template === "modern"  && <ModernTemplate  resume={resume} />}
             {resume.template === "classic" && <ClassicTemplate resume={resume} />}
           </div>
         </div>
-
       </div>
 
     </div>
-  );
+  </div>
+);
+
+// ─── Add this state near your other useState hooks ────────────────────────────
 }
