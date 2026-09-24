@@ -9,7 +9,7 @@ const pdfRoutes = require("./routes/pdf.routes");
 
 const session = require("express-session");
 const passport = require("./config/passport");
-
+const aiRoutes = require("./routes/ai.routes.js");
 
 
 const port = process.env.Port;
@@ -39,6 +39,7 @@ app.use(passport.session());
 app.use("/api/auth",authRoutes);
 app.use("/resume",resumeRoutes);
 app.use("/pdf",pdfRoutes);
+app.use("/api/ai", aiRoutes);
 
 
 
